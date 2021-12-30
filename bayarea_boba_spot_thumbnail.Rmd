@@ -1,0 +1,33 @@
+
+```{r}
+library(tidyverse)
+library(plotly)
+library(leaflet)
+library(mapview) #accompanies leaflet
+#webshot::install_phantomjs()#accomopanies mapview
+```
+
+```{r}
+data = read.csv("bayarea_boba_spots.csv")
+data
+```
+
+```{r}
+center_long = mean(data$long)
+center_lat = mean(data$lat)
+```
+
+```{r}
+table(data$city)
+```
+
+```{r}
+m = leaflet(data = data) %>% setView(lng = center_long, lat=center_lat, zoom = 10)
+
+
+thumbnail = m %>% addProviderTiles(providers$CartoDB.DarkMatterNoLabels) %>% 
+  addCircleMarkers(~long, ~lat, color = 'orange', weight = 5, radius = 1,
+                   label=paste0("Name: ",data$name, "\nRating: ",data$rating))
+
+mapshot(thumbnail, file = paste0(getwd(),"/data/subway_map.png"), url = paste0(getwd(),"/data/subway_map.html"))
+```
